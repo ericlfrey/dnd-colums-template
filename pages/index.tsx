@@ -11,8 +11,7 @@ export default function Home() {
     // Make sure we have a valid destination
     if (destination === undefined || destination === null) return null;
 
-    // If the source and destination columns are the same
-    // AND if the index is the same, the item isn't moving
+    // Make sure we're actually moving the item
     if (
       source.droppableId === destination.droppableId &&
       destination.index === source.index
@@ -25,7 +24,24 @@ export default function Home() {
 
     // If start is the same as end, we're in the same column
     if (start === end) {
-      /* ... */
+      // Move the item within the list
+      // Start by making a new list without the dragged item
+      const newList = start.list.filter(
+        (_: any, idx: number) => idx !== source.index
+      );
+
+      // Then insert the item at the right location
+      newList.splice(destination.index, 0, start.list[source.index]);
+
+      // Then create a new copy of the column object
+      const newCol = {
+        id: start.id,
+        list: newList,
+      };
+
+      // Update the state
+      setColumns(state => ({ ...state, [newCol.id]: newCol }));
+      return null;
     } else {
       // If start is different from end, we need to update multiple columns
       // Filter the start list like before
